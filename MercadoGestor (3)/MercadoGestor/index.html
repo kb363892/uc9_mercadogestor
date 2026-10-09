@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>MercadoGestor — Cadastro de Produtos</title>
+        <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+<header>
+    <div class="brand">
+        <div>
+            <h1>MercadoGestor</h1>
+            <p>Cadastro, estoque e acompanhamento de produtos</p>
+        </div>
+
+        <button class="secondary" onclick="newProductDisabled()">
+            ＋ Novo produto
+        </button>
+    </div>
+</header>
+    <main>
+        <section class="dash">
+            <div class="stat">
+                <span>Total de produtos</span>
+                <strong id="total">0</strong>
+                <small>itens cadastrados</small>
+            </div>
+            <div class="stat">
+                <span>Valor em estoque</span>
+                <strong id="stockValue">R$ 0,00</strong>
+                <small>preço × quantidade</small>
+            </div>
+            <div class="stat">
+                <span>Estoque baixo</span>
+                <strong id="lowStock">0</strong>
+                <small>até 10 unidades</small>
+            </div>
+            <div class="stat">
+                <span>Próximos do vencimento</span>
+                <strong id="expiring">0</strong>
+                <small>nos próximos 30 dias</small>
+            </div>
+        </section>
+        <section class="dashboard-grid">
+            <div class="panel">
+                <h2>Dashboard 1 — Produtos por tipo</h2>
+                <div id="typeBars" class="bars">
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Dashboard 2 — Distribuição do estoque</h2>
+                <div class="donutwrap">
+                    <div id="donut" class="donut">
+                    </div>
+                    <div id="legend" class="legendlist">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="panel">
+            <div class="toolbar">
+                <div class="actions">
+                    <button class="primary" onclick="newProductDisabled()">＋ Cadastrar produto</button>
+                    <button class="secondary" onclick="exportExcel()">⇩ Baixar relatório Excel</button>
+                </div>
+                <input id="search" class="search" placeholder="Pesquisar por nome, código, marca, lote ou tipo…" oninput="renderTable()">
+            </div>
+            <div class="tablewrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código de barras</th>
+                            <th>Produto</th>
+                            <th>Preço</th>
+                            <th>Unidade</th>
+                            <th>Qtd. unitária</th>
+                            <th>Estoque</th>
+                            <th>Marca</th>
+                            <th>Tipo</th>
+                            <th>Lote</th>
+                            <th>Fabricação</th>
+                            <th>Validade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <div id="modal" class="modal">
+        <div class="modalbox">
+            <div class="modalhead">
+                <h2 id="modalTitle">Cadastrar produto</h2>
+                <button class="ghost" onclick="closeForm()">✕</button>
+            </div>
+            <form id="form" onsubmit="saveProduct(event)">
+                <input type="hidden" id="id">
+                <div class="grid">
+                    <div class="field">
+                        <label>Código de barras *</label>
+                        <input id="barcode" required>
+                    </div>
+                    <div class="field full">
+                        <label>Nome do produto *</label>
+                        <input id="name" required>
+                    </div>
+                    <div class="field">
+                        <label>Preço (R$) *</label>
+                        <input id="price" type="number" min="0" step="0.01" required>
+                    </div>
+                    <div class="field">
+                        <label>Unidade de medida *</label>
+                        <select id="unit" required>
+                            <option value="kg">Quilograma (kg)</option>
+                            <option value="g">Grama (g)</option>
+                            <option value="l">Litro (l)</option>
+                            <option value="ml">Mililitro (ml)</option>
+                            <option value="m">Metro (m)</option>
+                            <option value="un">Unidade (un)</option>
+                            <option value="dz">Dúzia (dz)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Quantidade unitária *</label>
+                        <input id="unit_quantity" type="number" min="0" step="0.001" required>
+                    </div>
+                    <div class="field">
+                        <label>Quantidade em estoque *</label>
+                        <input id="stock_quantity" type="number" min="0" step="0.001" required>
+                    </div>
+                    <div class="field">
+                        <label>Marca *</label>
+                        <input id="brand" required>
+                    </div>
+                    <div class="field">
+                        <label>Tipo *</label>
+                        <input id="type" placeholder="Ex.: Alimentos, Bebidas…" required>
+                    </div>
+                    <div class="field">
+                        <label>Lote *</label>
+                        <input id="lot" required>
+                    </div>
+                    <div class="field">
+                        <label>Data de fabricação *</label>
+                        <input id="manufacturing_date" type="date" required>
+                    </div>
+                    <div class="field">
+                        <label>Data de validade *</label>
+                        <input id="expiration_date" type="date" required>
+                    </div>
+                </div>
+                <div class="formactions">
+                    <button type="button" class="ghost" onclick="closeForm()">Cancelar</button>
+                    <button class="primary">Salvar produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="toast" class="toast">
+    </div>
+    <script src="js/script.js" defer>
+</script>
+</body>
+</html>
